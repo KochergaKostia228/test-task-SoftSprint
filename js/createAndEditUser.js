@@ -5,7 +5,7 @@ const statusUser = document.getElementById("statusSwitch");
 const roleUser = document.getElementById("userRole");
 
 const tableBody = document.getElementById("usersTable");
-
+const addUserBtn = document.getElementById("addUserBtn");
 const form = document.getElementById("userForm");
 
 let editMode = false;
@@ -15,8 +15,6 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const url = editMode ? "api/editUser.php?id=" + userId.value : "api/createUser.php";
-
-    console.log(userId.value);
 
     fetch(`${url}`, {
         method: "POST",
@@ -33,9 +31,6 @@ form.addEventListener("submit", (e) => {
     })
     .then((res) => res.json())
     .then((data) => {
-
-        console.log(data);
-
         if (data.status) {
             if (editMode) {
                 editUser(data.user);
@@ -63,14 +58,18 @@ document.addEventListener("click", (e) => {
 
       const user = data.user;
 
-      console.log(user);
-
       userId.value = user.id;
       firstName.value = user.first_name;
       lastName.value = user.last_name;
       statusUser.checked = user.status == "active" ? true : false;
       roleUser.value = user.role == "admin" ? 1 : 2;
     });
+});
+
+addUserBtn.addEventListener("click", () => {
+    editMode = false;
+    userId.value = "";
+    form.reset();
 });
 
 function createUser(html) {

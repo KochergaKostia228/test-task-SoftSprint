@@ -62,6 +62,7 @@ $users = $userRepository->getAllUsers();
     <?php include 'components/modals/userModal.php'; ?>
     <?php include 'components/modals/deleteModal.php'; ?>
     <?php include 'components/modals/optionsErrorModal.php'; ?>
+    <?php include 'components/modals/deleteItemsModal.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="js/deleteUser.js"></script>

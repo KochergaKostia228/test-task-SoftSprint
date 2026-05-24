@@ -1,46 +1,47 @@
 const errorOptionsModalBody = document.getElementById("errorOptionsModalBody");
 
 function fetchSelectedUsers(ids, status) {
-    fetch("api/editStatusUsers.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            ids: ids,
-            status: status === "active" ? 1 : 2,
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status) {
-            ids.forEach(id => {
-                const userRow = document.querySelector(`tr[data-id="${id}"]`);
-                if (userRow) {
-                    const statusCell = userRow.querySelector(".status");
-                    if (statusCell) {
-                        statusCell.textContent = status === "active" ? "active" : "inactive";
-                    }
-                }
-            });
-        }
+  fetch("api/editStatusUsers.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ids: ids,
+      status: status === "active" ? 1 : 2,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status) {
+        ids.forEach((id) => {
+          const userRow = document.querySelector(`tr[data-id="${id}"]`);
+          if (userRow) {
+            const statusCell = userRow.querySelector(".status");
+            if (statusCell) {
+              statusCell.textContent =
+                status === "active" ? "active" : "inactive";
+            }
+          }
+        });
+      }
     });
 }
 
 function deleteSelectedUsers(ids) {
-    fetch("api/deleteUsers.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: ids })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status) {
-            data.ids.forEach(id => {
-                const userRow = document.querySelector(`tr[data-id="${id}"]`);
-                if (userRow) {
-                    userRow.remove();
-                }
-            });
-        }
+  fetch("api/deleteUsers.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: ids }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status) {
+        data.ids.forEach((id) => {
+          const userRow = document.querySelector(`tr[data-id="${id}"]`);
+          if (userRow) {
+            userRow.remove();
+          }
+        });
+      }
     });
 }
 
@@ -84,10 +85,22 @@ document.querySelectorAll(".options-block").forEach((block) => {
       return;
     }
 
+    console.log(selectedOption, selectedUserIds);
+
     if (selectedOption === "delete") {
-      deleteSelectedUsers(selectedUserIds);
-    }
-    else {
+      const modalElement = document.getElementById("deleteItemsModal");
+      const confirmBtn = document.getElementById("confirmDeleteItemsBtn");
+
+      if (!modalElement) return;
+
+      bootstrap.Modal.getOrCreateInstance(modalElement).show();
+
+      confirmBtn.onclick = function () {
+        deleteSelectedUsers(selectedUserIds);
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
+      };
+    } else {
       fetchSelectedUsers(selectedUserIds, selectedOption);
     }
   });

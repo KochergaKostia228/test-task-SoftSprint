@@ -6,7 +6,7 @@ function fetchSelectedUsers(ids, status) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ids: ids,
-      status: status === "active" ? 1 : 2,
+      status: status,
     }),
   })
     .then((response) => response.json())
@@ -17,11 +17,20 @@ function fetchSelectedUsers(ids, status) {
           if (userRow) {
             const statusCell = userRow.querySelector(".status");
             if (statusCell) {
-              statusCell.textContent =
-                status === "active" ? "active" : "inactive";
+              statusCell.innerHTML = `<div class="${status == 1 ? "bg-success" : "bg-secondary"} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;"></div>`;
             }
           }
         });
+
+        const checkboxes = tableUser.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+
+        const checkAll = document.getElementById("allCheck");
+        if (checkAll) {
+          checkAll.checked = false;
+        }
       }
     });
 }
@@ -41,6 +50,11 @@ function deleteSelectedUsers(ids) {
             userRow.remove();
           }
         });
+
+        const checkAll = document.getElementById("allCheck");
+        if (checkAll) {
+          checkAll.checked = false;
+        }
       }
     });
 }
@@ -55,7 +69,7 @@ document.querySelectorAll(".options-block").forEach((block) => {
 
     const modalElement = document.getElementById("optionsErrorModal");
 
-    if (!selectedOption) {
+    if (selectedOption === "none") {
       if (errorOptionsModalBody) {
         errorOptionsModalBody.textContent = "Please select an option.";
       }
@@ -84,8 +98,6 @@ document.querySelectorAll(".options-block").forEach((block) => {
 
       return;
     }
-
-    console.log(selectedOption, selectedUserIds);
 
     if (selectedOption === "delete") {
       const modalElement = document.getElementById("deleteItemsModal");

@@ -7,7 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" id="deleteModalBody">
         <p>Are you sure you want to delete this item?</p>
       </div>
 

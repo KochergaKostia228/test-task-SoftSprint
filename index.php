@@ -1,10 +1,12 @@
 <?php
 require_once 'api/db.php';
 require_once 'api/repository/UserRepository.php';
+require_once 'model/roles.php';
 
 $userRepository = new UserRepository($pdo);
 $users = $userRepository->getAllUsers();
 
+$roles = getRoles();
 
 ?>
 
@@ -42,8 +44,12 @@ $users = $userRepository->getAllUsers();
                         </th>
                         <td class="first_name"><?php echo htmlspecialchars($user['first_name']); ?></td>
                         <td class="last_name"><?php echo htmlspecialchars($user['last_name']); ?></td>
-                        <td class="status"><?php echo htmlspecialchars($user['status']); ?></td>
-                        <td class="role"><?php echo htmlspecialchars($user['role']); ?></td>
+                        <td class="status d-flex align-items-center">
+                            <div class="<?php echo $user['status'] ? 'bg-success' : 'bg-secondary'; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
+                            
+                            </div>
+                        </td>
+                        <td class="role"><?php echo htmlspecialchars($roles[$user['role']]); ?></td>
                         <td>
                             <button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#userModal">
                                 Edit

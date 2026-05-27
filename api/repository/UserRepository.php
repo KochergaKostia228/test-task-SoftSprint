@@ -10,22 +10,22 @@ class UserRepository
 
     public function getAllUsers()
     {
-        $stmt = $this->pdo->query("SELECT id, first_name, last_name, status, role FROM users");
+        $stmt = $this->pdo->query("SELECT * FROM users ORDER BY id ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findById(int $id)
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM users WHERE id = :id'
+            'SELECT id, first_name, last_name, status, role FROM users WHERE id = :id'
         );
 
         $stmt->bindValue(':id', $id);
         $stmt->execute();
 
-        $movie = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $movie ?: null;
+        return $user ?: null;
     }
 
     public function create(string $first_name, string $last_name, int $status, int $role)

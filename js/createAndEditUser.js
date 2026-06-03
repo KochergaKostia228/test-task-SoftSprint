@@ -10,6 +10,7 @@ const tableBody = document.getElementById("usersTable");
 const addUserBtn = document.getElementById("addUserBtn");
 const form = document.getElementById("userForm");
 const userTitle = document.getElementById("userModalLabel");
+const userFormError = document.getElementById("userFormError");
 
 let editMode = false;
 
@@ -51,6 +52,10 @@ form.addEventListener("submit", (e) => {
         const checkAll = document.getElementById("allCheck");
         if (checkAll) {
           checkAll.checked = false;
+        }
+      } else {  
+        if (userFormError) {
+          userFormError.textContent = data.error.message || "An error occurred.";
         }
       }
     });
@@ -97,7 +102,7 @@ function createUser(user) {
       </th>
       <td class="first_name">${user.first_name}</td>
       <td class="last_name">${user.last_name}</td>
-      <td class="status d-flex align-items-center">
+      <td class="status">
           <div class="${user.status ? 'bg-success' : 'bg-secondary'} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
           
           </div>

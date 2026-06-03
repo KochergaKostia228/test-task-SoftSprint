@@ -1,7 +1,7 @@
 <?php
-require_once 'api/db.php';
-require_once 'api/repository/UserRepository.php';
-require_once 'model/roles.php';
+require_once(__DIR__ . '/db.php');
+require_once(__DIR__ . '/repository/UserRepository.php');
+require_once(__DIR__ . '/model/roles.php');
 
 $userRepository = new UserRepository($pdo);
 $users = $userRepository->getAllUsers();
@@ -44,7 +44,7 @@ $roles = getRoles();
                         </th>
                         <td class="first_name"><?php echo htmlspecialchars($user['first_name']); ?></td>
                         <td class="last_name"><?php echo htmlspecialchars($user['last_name']); ?></td>
-                        <td class="status d-flex align-items-center">
+                        <td class="status ">
                             <div class="<?php echo $user['status'] ? 'bg-success' : 'bg-secondary'; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
                             
                             </div>

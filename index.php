@@ -6,7 +6,7 @@ require_once(__DIR__ . '/model/roles.php');
 $userRepository = new UserRepository($pdo);
 $users = $userRepository->getAllUsers();
 
-$roles = getRoles();
+$role = getRoles();
 
 ?>
 
@@ -16,6 +16,7 @@ $roles = getRoles();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Document</title>
 </head>
@@ -45,16 +46,16 @@ $roles = getRoles();
                         <td class="first_name"><?php echo htmlspecialchars($user['first_name']); ?></td>
                         <td class="last_name"><?php echo htmlspecialchars($user['last_name']); ?></td>
                         <td class="status ">
-                            <div class="<?php echo $user['status'] ? 'bg-success' : 'bg-secondary'; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
+                            <div class="status <?php echo $user['status'] ? 'active' : ''; ?> rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
                             
                             </div>
                         </td>
-                        <td class="role"><?php echo htmlspecialchars($roles[$user['role']]); ?></td>
+                        <td class="role"><?php echo htmlspecialchars($role[$user['role']]); ?></td>
                         <td>
                             <button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#userModal">
                                 Edit
                             </button>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemsModal">
                                 Delete
                             </button>
                         </td>
@@ -66,7 +67,6 @@ $roles = getRoles();
     </div>
 
     <?php include 'components/modals/userModal.php'; ?>
-    <?php include 'components/modals/deleteModal.php'; ?>
     <?php include 'components/modals/optionsErrorModal.php'; ?>
     <?php include 'components/modals/deleteItemsModal.php'; ?>
 

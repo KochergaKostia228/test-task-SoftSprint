@@ -1,5 +1,3 @@
-import { roleMap } from "./roles.js";
-
 const userId = document.getElementById("userId");
 const firstName = document.getElementById("firstName");
 const lastName = document.getElementById("lastName");
@@ -12,22 +10,18 @@ const form = document.getElementById("userForm");
 const userTitle = document.getElementById("userModalLabel");
 const userFormError = document.getElementById("userFormError");
 
-let editMode = false;
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const url = editMode
-    ? "api/editUser.php?id=" + userId.value
-    : "api/createUser.php";
-  const userTitleText = editMode ? "Edit User" : "Create User";
+  const url = userId.value === ""
+    ? "api/createUser.php"
+    : "api/editUser.php?id=" + userId.value;
+
+  const userTitleText = userId.value ? "Edit User" : "Create User";
 
   fetch(`${url}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    body: new URLSearchParams({
       id: userId.value || null,
       first_name: firstName.value,
       last_name: lastName.value,
@@ -38,7 +32,7 @@ form.addEventListener("submit", (e) => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status) {
-        if (editMode) {
+        if (userId.value) {
           editUser(data.user);
         } else {
           createUser(data.user);
@@ -65,8 +59,6 @@ document.addEventListener("click", (e) => {
   const button = e.target.closest(".btn-edit");
   if (!button) return;
 
-  editMode = true;
-
   userTitle.textContent = "Edit User";
 
   const userRow = button.closest("tr");
@@ -88,7 +80,6 @@ document.addEventListener("click", (e) => {
 });
 
 addUserBtn.addEventListener("click", () => {
-  editMode = false;
   userId.value = "";
   userTitle.textContent = "Create User";
   form.reset();
@@ -103,16 +94,16 @@ function createUser(user) {
       <td class="first_name">${user.first_name}</td>
       <td class="last_name">${user.last_name}</td>
       <td class="status">
-          <div class="${user.status ? 'bg-success' : 'bg-secondary'} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
+          <div class="status ${user.status ? 'active' : ''} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
           
           </div>
       </td>
-      <td class="role">${roleMap[user.role]}</td>
+      <td class="role">${user.role}</td>
       <td>
           <button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#userModal">
               Edit
           </button>
-          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemsModal">
               Delete
           </button>
       </td>
@@ -133,16 +124,16 @@ function editUser(user) {
         <td class="first_name">${user.first_name}</td>
         <td class="last_name">${user.last_name}</td>
         <td class="status d-flex align-items-center">
-            <div class="${user.status ? 'bg-success' : 'bg-secondary'} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
+            <div class="status ${user.status ? 'active' : ''} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;">
             
             </div>
         </td>
-        <td class="role">${roleMap[user.role]}</td>
+        <td class="role">${user.role}</td>
         <td>
             <button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#userModal">
                 Edit
             </button>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemsModal">
                 Delete
             </button>
         </td>
@@ -159,8 +150,6 @@ function closeModal() {
   modal.hide();
 
   form.reset();
-
-  editMode = false;
 
   userId.value = "";
 }

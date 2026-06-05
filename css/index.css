@@ -1,0 +1,7 @@
+.status{
+    background-color: #838383;
+}
+
+.status.active{
+    background-color: #00ff00;
+}

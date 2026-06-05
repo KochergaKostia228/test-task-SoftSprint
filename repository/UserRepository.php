@@ -1,4 +1,6 @@
 <?php
+
+require_once(__DIR__ . '/../model/roles.php');
 class UserRepository
 {
     private $pdo;
@@ -11,7 +13,10 @@ class UserRepository
     public function getAllUsers()
     {
         $stmt = $this->pdo->query("SELECT * FROM users ORDER BY id ASC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $users;
     }
 
     public function findById(int $id)

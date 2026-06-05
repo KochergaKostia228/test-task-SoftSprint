@@ -1,13 +1,15 @@
 const errorOptionsModalBody = document.getElementById("errorOptionsModalBody");
 
+
 function fetchSelectedUsers(ids, status) {
+  const formData = new FormData();
+
+  ids.forEach(id => formData.append("ids[]", id));
+  formData.append("status", status);
+
   fetch("api/editStatusUsers.php", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ids: ids,
-      status: status,
-    }),
+    body: formData
   })
     .then((response) => response.json())
     .then((data) => {
@@ -17,7 +19,7 @@ function fetchSelectedUsers(ids, status) {
           if (userRow) {
             const statusCell = userRow.querySelector(".status");
             if (statusCell) {
-              statusCell.innerHTML = `<div class="${status == 1 ? "bg-success" : "bg-secondary"} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;"></div>`;
+              statusCell.innerHTML = `<div class="status ${status == 1 ? "active" : ""} rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;"></div>`;
             }
           }
         });
@@ -36,15 +38,19 @@ function fetchSelectedUsers(ids, status) {
 }
 
 function deleteSelectedUsers(ids) {
+  const formData = new FormData();
+
+  ids.forEach(id => formData.append("ids[]", id));
+  formData.append("status", status);
+
   fetch("api/deleteUsers.php", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ids: ids }),
+    body: formData
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.status) {
-        data.ids.forEach((id) => {
+        data.user.ids.forEach((id) => {
           const userRow = document.querySelector(`tr[data-id="${id}"]`);
           if (userRow) {
             userRow.remove();
@@ -104,6 +110,11 @@ document.querySelectorAll(".options-block").forEach((block) => {
       const confirmBtn = document.getElementById("confirmDeleteItemsBtn");
 
       if (!modalElement) return;
+
+      const deleteItemsModalBody = document.getElementById("deleteModalBody");
+      if (deleteItemsModalBody) {
+        deleteItemsModalBody.textContent = `Are you sure you want to delete ${selectedUserIds.length} selected user(s)?`;
+      }
 
       bootstrap.Modal.getOrCreateInstance(modalElement).show();
 

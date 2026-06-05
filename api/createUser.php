@@ -1,24 +1,28 @@
 <?php
+
 require_once(__DIR__ . '/../db.php');
-require_once (__DIR__. '/../repository/UserRepository.php');
-require_once (__DIR__. '/../model/roles.php');
+require_once(__DIR__ . '/../repository/UserRepository.php');
+require_once(__DIR__ . '/../model/roles.php');
+require_once(__DIR__ . '/../model/ResponseApi.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $data = json_decode(file_get_contents('php://input'), true);
+$userRepository = new UserRepository($pdo);
 
-    $userRepository = new UserRepository($pdo);
+$first_name = $_POST["first_name"] ?? null;
+$last_name = $_POST["last_name"] ?? null;
+$status = $_POST["status"] ?? null;
+$role = $_POST["role"] ?? null;
 
-    if (!isset($data["first_name"]) || !isset($data["last_name"]) || !isset($data["status"]) || !isset($data["role"])) {
-        echo(json_encode(["status" => false, "error" => ["code" => 500, "message" => "Not all required fields are filled"]]));
-        exit;
-    }
-
-    $id = $userRepository->create($data["first_name"], $data["last_name"], $data["status"], $data["role"]);
-
-    $user = $userRepository->findById($id);
-
-    echo(json_encode(["status" => true, "error" => null, "user" => $user]));
+if (!$first_name || !$last_name || $status === null || $role === null) {
+    echo json_encode(new ResponseApi(false, [
+        "code" => 400,
+        "message" => "Not all required fields are filled"
+    ]));
     exit;
-} else {
-    echo "No data submitted.";
 }
+
+$id = $userRepository->create($first_name, $last_name, $status, $role);
+
+$user = $userRepository->findById($id);
+$user['role'] = getRoles()[$user['role']] ?? null;
+
+echo json_encode(new ResponseApi(true, null, ["user" => $user]));

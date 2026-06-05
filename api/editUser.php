@@ -1,36 +1,38 @@
 <?php
 require_once(__DIR__ . '/../db.php');
 require_once(__DIR__ . '/../repository/UserRepository.php');
+require_once (__DIR__. '/../model/ResponseApi.php');
+require_once (__DIR__. '/../model/roles.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $data = json_decode(file_get_contents('php://input'), true);
-
     $userRepository = new UserRepository($pdo);
 
-    $id = isset($data['id']) ? (int) $data['id'] : 0;
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
     if ($id <= 0) {
-        echo(json_encode(["status" => false, "error" => ["code" => 500, "message" => "No correct id"]]));
+        echo(json_encode(new ResponseApi(false, ["code" => 500, "message" => "No correct id"])));
         exit;
     }
 
     $user = $userRepository->findById($id);
 
     if (!$user) {
-        echo(json_encode(["status" => false, "error" => ["code" => 500, "message" => "No such user exists"]]));
+        echo(json_encode(new ResponseApi(false, ["code" => 500, "message" => "No such user exists"])));
         exit;
     }
 
-    if (!isset($data["first_name"], $data["last_name"], $data["status"], $data["role"])) {
-        echo(json_encode(["status" => false, "error" => ["code" => 500, "message" => "Missing required fields"]]));
+    if (!isset($_POST["first_name"], $_POST["last_name"], $_POST["status"], $_POST["role"])) {
+        echo(json_encode(new ResponseApi(false, ["code" => 500, "message" => "Missing required fields"])));
         exit;
     }
 
-    $userRepository->update($id, $data["first_name"], $data["last_name"], $data["status"], $data["role"]);
+    $userRepository->update($id, $_POST["first_name"], $_POST["last_name"], $_POST["status"], $_POST["role"]);
 
     $updatedUser = $userRepository->findById($id);
 
-    echo(json_encode(["status" => true, "error" => null, "user" => $updatedUser]));
+    $updatedUser['role'] = getRoles()[$updatedUser['role']] ?? null;
+
+    echo(json_encode(new ResponseApi(true, null, ["user" => $updatedUser])));
     exit;
 } else {
     echo "No data submitted.";
